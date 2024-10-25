@@ -1,5 +1,6 @@
 package com.oss_att.accounts.controller;
 
+import com.oss_att.accounts.constans.AccountsConstants;
 import com.oss_att.accounts.dto.CustomerDto;
 import com.oss_att.accounts.dto.ResponseDto;
 import org.springframework.http.HttpStatus;
@@ -14,6 +15,6 @@ public class AccountController {
     @PostMapping("/create")
    public ResponseEntity<ResponseDto> createAccount(@RequestBody CustomerDto customerDto) {
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseDto())
+        return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseDto(AccountsConstants.STATUS_201,AccountsConstants.MESSAGE_201));
     }
 }
