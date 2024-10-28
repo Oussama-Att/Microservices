@@ -12,14 +12,24 @@ import java.time.LocalDateTime;
 
 @ControllerAdvice  // Whenever exception happen any of omy controller if any exception happen please invoke a methode in this class
 public class GlobalExceptionHandler {
-    @ExceptionHandler(CustomerAlreadyExistsException.class)
-    public ResponseEntity<ErrorResponseDto> handleCustomerAlreadyExistsException(CustomerAlreadyExistsException exception, WebRequest webRequest) {
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<ErrorResponseDto> handleResourceNotFoundException(ResourceNotFoundException exception, WebRequest webRequest) {
     ErrorResponseDto errorResponseDto = new ErrorResponseDto(
             webRequest.getDescription(false),
-            HttpStatus.BAD_REQUEST,
+            HttpStatus.NOT_FOUND,
             exception.getMessage(),
             LocalDateTime.now()
     );
-    return new ResponseEntity<>(errorResponseDto, HttpStatus.BAD_REQUEST);
+    return new ResponseEntity<>(errorResponseDto, HttpStatus.NOT_FOUND);
+    }
+    @ExceptionHandler(CustomerAlreadyExistsException.class)
+    public ResponseEntity<ErrorResponseDto> handleCustomerAlreadyExistsException(CustomerAlreadyExistsException exception, WebRequest webRequest) {
+        ErrorResponseDto errorResponseDto = new ErrorResponseDto(
+                webRequest.getDescription(false),
+                HttpStatus.BAD_REQUEST,
+                exception.getMessage(),
+                LocalDateTime.now()
+        );
+        return new ResponseEntity<>(errorResponseDto, HttpStatus.BAD_REQUEST);
     }
 }

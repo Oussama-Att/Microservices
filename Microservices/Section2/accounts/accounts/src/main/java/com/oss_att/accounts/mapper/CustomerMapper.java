@@ -1,14 +1,16 @@
-package com.oss_att.accounts.service.impl;
+package com.oss_att.accounts.mapper;
+
 
 import com.oss_att.accounts.dto.CustomerDto;
 import com.oss_att.accounts.entity.Customer;
 
 public class CustomerMapper {
+
     public static CustomerDto mapToCustomerDto(Customer customer, CustomerDto customerDto) {
-    customerDto.setName(customerDto.getName());
-    customerDto.setEmail(customerDto.getEmail());
-    customerDto.setMobileNumber(customer.getMobileNumber() );
-    return customerDto;
+        customerDto.setName(customer.getName());
+        customerDto.setEmail(customer.getEmail());
+        customerDto.setMobileNumber(customer.getMobileNumber());
+        return customerDto;
     }
 
     public static Customer mapToCustomer(CustomerDto customerDto, Customer customer) {
@@ -17,4 +19,5 @@ public class CustomerMapper {
         customer.setMobileNumber(customerDto.getMobileNumber());
         return customer;
     }
+
 }

@@ -1,10 +1,13 @@
 package com.oss_att.accounts.service.impl;
 
 import com.oss_att.accounts.constans.AccountsConstants;
+import com.oss_att.accounts.dto.AccountsDto;
 import com.oss_att.accounts.dto.CustomerDto;
 import com.oss_att.accounts.entity.Accounts;
 import com.oss_att.accounts.entity.Customer;
 import com.oss_att.accounts.exception.CustomerAlreadyExistsException;
+import com.oss_att.accounts.exception.ResourceNotFoundException;
+import com.oss_att.accounts.mapper.AccountsMapper;
 import com.oss_att.accounts.repository.AccountsRepository;
 import com.oss_att.accounts.repository.CustomerRepository;
 import com.oss_att.accounts.service.IAccountsService;
@@ -29,15 +32,32 @@ public class AccountServiceImpl implements IAccountsService {
 
     @Override
     public void createAccount(CustomerDto customerDto) {
-    Customer customer = CustomerMapper.mapToCustomer(customerDto,new Customer());
-    Optional<Customer> optionalCustomer=customerRepository.findByMobileNumber(customerDto.getMobileNumber());
-    if(optionalCustomer.isPresent()){
-        throw new CustomerAlreadyExistsException("Customer already registered with this mobile" + customerDto.getMobileNumber());
+        Customer customer = CustomerMapper.mapToCustomer(customerDto, new Customer());
+        Optional<Customer> optionalCustomer = customerRepository.findByMobileNumber(customerDto.getMobileNumber());
+        if(optionalCustomer.isPresent()) {
+            throw new CustomerAlreadyExistsException("Customer already registered with given mobileNumber "
+                    +customerDto.getMobileNumber());
         }
         customer.setCreatedAt(LocalDateTime.now());
         customer.setCreatedBy("oussama");
         Customer savedCustomer = customerRepository.save(customer);
-       //accountsRepository.save(createNewAccount(savedCustomer));
+        accountsRepository.save(createNewAccount(savedCustomer));
+    }
+    /**
+     * @param mobileNumber -Input Mobile Number
+     * @return Accounts Details on a given mobileNumber
+     */
+    @Override
+    public CustomerDto fetchAccount(String mobileNumber) {
+       Customer customer = customerRepository.findByMobileNumber(mobileNumber).orElseThrow(
+               () -> new ResourceNotFoundException("Customer", "mobileNumber", mobileNumber)
+        );
+        Accounts accounts = accountsRepository.findByCustomerId(customer.getCustomerId()).orElseThrow(
+                () -> new ResourceNotFoundException("Account", "customerId", customer.getCustomerId().toString())
+        );
+        CustomerDto customerDto = CustomerMapper.mapToCustomerDto(customer, new CustomerDto());
+        customerDto.setAccountsDto(AccountsMapper.mapToAccountsDto(accounts,new AccountsDto()));
+        return customerDto;
     }
 
     private Accounts createNewAccount(Customer customer) {
@@ -48,9 +68,11 @@ public class AccountServiceImpl implements IAccountsService {
         newAccount.setAccountNumber(randomAccNumber);
         newAccount.setAccountType(AccountsConstants.SAVINGS);
         newAccount.setBranchAddress(AccountsConstants.ADDRESS);
-        customer.setCreatedAt(LocalDateTime.now());
-        customer.setCreatedBy("oussama");
+        newAccount.setCreatedAt(LocalDateTime.now());
+        newAccount.setCreatedBy("oussama");
         return newAccount;
     }
+
+
 
 }
