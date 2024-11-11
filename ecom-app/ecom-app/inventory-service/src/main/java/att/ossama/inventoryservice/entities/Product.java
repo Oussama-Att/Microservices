@@ -4,10 +4,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.UUID;
 
@@ -15,10 +12,11 @@ import java.util.UUID;
 @Entity
 @Data @AllArgsConstructor @NoArgsConstructor
 @Builder
+@Getter @Setter
 public class Product {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO) // Use AUTO for UUID
-    private UUID id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // Use AUTO for UUID
+    private Long id;
     private String name;
     private double price;
     private int quantity;

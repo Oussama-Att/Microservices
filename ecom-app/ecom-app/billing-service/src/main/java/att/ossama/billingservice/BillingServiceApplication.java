@@ -18,7 +18,6 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
-
 @SpringBootApplication
 @EnableFeignClients
 public class BillingServiceApplication {
@@ -27,10 +26,10 @@ public class BillingServiceApplication {
         SpringApplication.run(BillingServiceApplication.class, args);
     }
     @Bean
-    CommandLineRunner commandLineRunner(BillRepository billRepository,
+    CommandLineRunner commandLineRunner(BillRepository  billRepository,
                                         ProductItemRepository productItemRepository,
                                         CustomerRestClient customerRestClient,
-                                        ProductRestClient productRestClient) {
+                                        ProductRestClient productRestClient){
 
         return args -> {
             Collection<Customer> customers = customerRestClient.getAllCustomers().getContent();
@@ -38,7 +37,7 @@ public class BillingServiceApplication {
 
             customers.forEach(customer -> {
                 Bill bill = Bill.builder()
-                        .BillingDate(new Date())
+                        .billingDate(new Date())
                         .customerId(customer.getId())
                         .build();
                 billRepository.save(bill);
@@ -47,11 +46,12 @@ public class BillingServiceApplication {
                             .bill(bill)
                             .productId(product.getId())
                             .quantity(1+new Random().nextInt(10))
-                            .uniPrice(product.getPrice())
+                            .unitPrice(product.getPrice())
                             .build();
                     productItemRepository.save(productItem);
                 });
             });
         };
     }
+
 }
