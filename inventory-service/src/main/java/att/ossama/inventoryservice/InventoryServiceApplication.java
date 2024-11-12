@@ -1,5 +1,6 @@
 package att.ossama.inventoryservice;
 
+
 import att.ossama.inventoryservice.entities.Product;
 import att.ossama.inventoryservice.repositories.ProductRepository;
 import org.springframework.boot.CommandLineRunner;
@@ -7,6 +8,8 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.rest.core.config.RepositoryRestConfiguration;
+
+import java.util.UUID;
 
 @SpringBootApplication
 public class InventoryServiceApplication {
@@ -19,9 +22,9 @@ public class InventoryServiceApplication {
         return args -> {
             //restConfiguration.exposeIdsFor(Product.class);
             productRepository.save(Product.builder()
-                    .name("Computer")
-                    .price(3000)
-                    .quantity(100)
+                            .name("Computer")
+                            .price(3000)
+                            .quantity(100)
                     .build());
             productRepository.save(Product.builder()
                     .name("Phone")
