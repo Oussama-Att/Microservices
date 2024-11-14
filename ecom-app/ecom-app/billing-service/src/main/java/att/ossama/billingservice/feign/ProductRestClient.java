@@ -6,6 +6,8 @@ import org.springframework.hateoas.PagedModel;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
+import java.util.List;
+
 @FeignClient(name = "inventory-service")
 public interface ProductRestClient {
 
@@ -13,5 +15,5 @@ public interface ProductRestClient {
     Product getProductById(@PathVariable String id);
 
     @GetMapping("/api/products")
-    PagedModel<Product> getAllProducts();
+    List<Product> getAllProducts();  // Change from PagedModel<Product> to List<Product>
 }

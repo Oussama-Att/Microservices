@@ -26,32 +26,41 @@ public class BillingServiceApplication {
         SpringApplication.run(BillingServiceApplication.class, args);
     }
     @Bean
-    CommandLineRunner commandLineRunner(BillRepository  billRepository,
+    CommandLineRunner commandLineRunner(BillRepository billRepository,
                                         ProductItemRepository productItemRepository,
                                         CustomerRestClient customerRestClient,
-                                        ProductRestClient productRestClient){
-
+                                        ProductRestClient productRestClient) {
         return args -> {
-            Collection<Customer> customers = customerRestClient.getAllCustomers().getContent();
-            Collection<Product> products = productRestClient.getAllProducts().getContent();
+            // Fetch customers and products
+            Collection<Customer> customers = customerRestClient.getAllCustomers() != null ? customerRestClient.getAllCustomers().getContent() : null;
+            Collection<Product> products = productRestClient.getAllProducts() != null ? productRestClient.getAllProducts() : null;
 
-            customers.forEach(customer -> {
-                Bill bill = Bill.builder()
-                        .billingDate(new Date())
-                        .customerId(customer.getId())
-                        .build();
-                billRepository.save(bill);
-                products.forEach(product -> {
-                    ProductItem productItem = ProductItem.builder()
-                            .bill(bill)
-                            .productId(product.getId())
-                            .quantity(1+new Random().nextInt(10))
-                            .unitPrice(product.getPrice())
+            // Check if customers and products are available
+            if (customers != null && products != null) {
+                customers.forEach(customer -> {
+                    // Create and save a new bill
+                    Bill bill = Bill.builder()
+                            .billingDate(new Date())
+                            .customerId(customer.getId())
                             .build();
-                    productItemRepository.save(productItem);
+                    billRepository.save(bill);
+
+                    // Add products to the bill
+                    products.forEach(product -> {
+                        ProductItem productItem = ProductItem.builder()
+                                .bill(bill)
+                                .productId(product.getId())
+                                .quantity(1 + new Random().nextInt(10))  // Random quantity between 1 and 10
+                                .unitPrice(product.getPrice())
+                                .build();
+                        productItemRepository.save(productItem);
+                    });
                 });
-            });
+            } else {
+                System.out.println("No customers or products found.");
+            }
         };
     }
+
 
 }
